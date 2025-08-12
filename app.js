@@ -1,31 +1,38 @@
+// app.js
 const express = require("express");
 const path = require("path");
 
-const dataPath = path.resolve(__dirname, "db", "employees.json");
-const raw = require(dataPath); // require JSON directly
-
-const employees = Array.isArray(raw) ? raw : raw.employees;
-
 const app = express();
 
+// Load the seed data from db/employees.json
+const dataPath = path.resolve(__dirname, "db", "employees.json");
+const employees = require(dataPath); // must be a JSON array
+
+// GET / -> "Hello employees"
 app.get("/", (req, res) => {
-  res.send("Hello employees"); // match your tests exactly (no "!")
+  res.send("Hello employees");
 });
 
-// define /employees/random BEFORE /:id
-app.get("/employees/random", (_req, res) => {
-  const one = employees[Math.floor(Math.random() * employees.length)];
-  res.json(one);
+
+// GET /employees/random -> one random employee
+app.get("/employees/random", (req, res) => {
+  const idx = Math.floor(Math.random() * employees.length);
+  res.json(employees[idx]);
 });
 
-app.get("/employees", (_req, res) => {
+// GET /employees -> the array of employees
+app.get("/employees", (req, res) => {
   res.json(employees);
 });
 
+// GET /employees/:id -> employee with that id, or 404
 app.get("/employees/:id", (req, res) => {
   const id = Number(req.params.id);
-  const found = employees.find(e => Number(e.id) === id);
-  if (!found) return res.status(404).json({ message: `No employee with id ${id}` });
+  const found = employees.find((e) => Number(e.id) === id);
+
+  if (!found) {
+    return res.status(404).json({ message: `No employee with id ${id}` });
+  }
   res.json(found);
 });
 
