@@ -8,7 +8,7 @@ const dataPath = path.resolve(__dirname, "db", "employees.json");
 const employees = require(dataPath); // must be an array
 
 app.get("/", (_req, res) => {
-  res.send("Hello employees");
+  res.send("Hello employees!");
 });
 
 app.get("/employees/random", (_req, res) => {
